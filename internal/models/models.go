@@ -42,3 +42,11 @@ type OrderProduct struct {
 	Order   Order   `gorm:"constraint:OnDelete:CASCADE;"`
 	Product Product `gorm:"constraint:OnDelete:CASCADE;"`
 }
+
+type StatusOrder string
+
+const (
+	StatusNew        StatusOrder = "New"
+	StatusProcessing StatusOrder = "Processing"
+	StatusCancelled  StatusOrder = "Cancelled"
+)
