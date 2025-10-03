@@ -18,10 +18,10 @@ func (repo *Repository) GetUser(id uint) (*models.User, error) {
 	return &category, nil
 }
 
-func (repo *Repository) GetUsers(id uint) (*[]models.User, error) {
+func (repo *Repository) GetUsers() (*[]models.User, error) {
 
 	var users []models.User
-	if err := repo.db.Find(&users, id).Error; err != nil {
+	if err := repo.db.Find(&users).Error; err != nil {
 		return nil, err
 	}
 	return &users, nil
