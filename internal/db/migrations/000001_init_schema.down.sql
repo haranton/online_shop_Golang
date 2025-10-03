@@ -1,0 +1,7 @@
+
+DROP TABLE IF EXISTS order_products;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS users;
+DROP INDEX IF EXISTS idx_products_name;
