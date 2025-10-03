@@ -26,11 +26,11 @@ type Category struct {
 }
 
 type Product struct {
-	ID         uint     `gorm:"primaryKey;autoIncrement"`
-	Name       string   `gorm:"not null"`
-	CategoryID uint     `gorm:"not null"`
-	Category   Category `gorm:"constraint:OnDelete:CASCADE;"`
-
+	ID            uint           `gorm:"primaryKey;autoIncrement"`
+	Name          string         `gorm:"not null"`
+	CategoryID    uint           `gorm:"not null"`
+	Category      Category       `gorm:"constraint:OnDelete:CASCADE;"`
+	Count         int            `gorm:"not null"`
 	OrderProducts []OrderProduct `gorm:"foreignKey:ProductID"`
 }
 
