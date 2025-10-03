@@ -18,8 +18,16 @@ type Config struct {
 
 func LoadConfig() *Config {
 
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
+	paths := []string{".env", "../.env"}
+	var err error
+	for _, path := range paths {
+		err = godotenv.Load(path)
+		if err == nil {
+			break
+		}
+	}
+	if err != nil {
+		log.Println("Warning: .env file not found, using system environment variables")
 	}
 
 	cfg := &Config{
@@ -31,6 +39,7 @@ func LoadConfig() *Config {
 		DBName:     getEnv("DB_NAME", "db"),
 	}
 
+	log.Println("Configuration loaded successfully")
 	return cfg
 
 }
