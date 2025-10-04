@@ -18,7 +18,7 @@ func NewHandler(service *service.Service) *Handler {
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	// Users
 	mux.HandleFunc("/api/users", h.UsersHandler) // GET, POST
-	mux.HandleFunc("/api/users/", h.UserHandler) // GET, PUT, DELETE
+	/*mux.HandleFunc("/api/users/", h.UserHandler) // GET, PUT, DELETE
 
 	// Products
 	mux.HandleFunc("/api/products", h.ProductsHandler) // GET, POST
@@ -30,5 +30,5 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 
 	// Orders
 	mux.HandleFunc("/api/orders", h.OrdersHandler) // GET, POST
-	mux.HandleFunc("/api/orders/", h.OrderHandler) // GET, PUT, DELETE
+	mux.HandleFunc("/api/orders/", h.OrderHandler) // GET, PUT, DELETE */
 }

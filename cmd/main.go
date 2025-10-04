@@ -5,6 +5,9 @@ import (
 	"net/http"
 	"onlineShop/internal/config"
 	"onlineShop/internal/db"
+	"onlineShop/internal/handlers"
+	"onlineShop/internal/repo"
+	"onlineShop/internal/service"
 )
 
 func main() {
@@ -16,14 +19,15 @@ func main() {
 	_ = connectDb
 
 	//todo repository, service, handler
+	repo := repo.NewReposytory(connectDb)
+	service := service.NewService(repo)
+	handlers := handlers.NewHandler(service)
 
-	// server
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Hello, World!")
-	})
+	mux := http.NewServeMux()
+	handlers.RegisterRoutes(mux)
 
 	fmt.Println("Server is running on port", config.AppPort)
-	if err := http.ListenAndServe(":"+config.AppPort, nil); err != nil {
+	if err := http.ListenAndServe(":"+config.AppPort, mux); err != nil {
 		fmt.Println("Failed to start server:", err)
 	}
 }
