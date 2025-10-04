@@ -6,8 +6,8 @@ import (
 	"strconv"
 )
 
-func GetIDFromRequest(r *http.Request) (uint, error) {
-	idStr := r.PathValue("id")
+func GetParamIDFromRequest(r *http.Request, param string) (uint, error) {
+	idStr := r.PathValue(param)
 	if idStr == "" {
 		return 0, fmt.Errorf("id is empty")
 	}

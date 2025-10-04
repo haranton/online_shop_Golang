@@ -37,7 +37,7 @@ func (h *Handler) CategoriesPostHandler(w http.ResponseWriter, r *http.Request) 
 
 func (h *Handler) CategoryGetHandler(w http.ResponseWriter, r *http.Request) {
 
-	id, err := utils.GetIDFromRequest(r)
+	id, err := utils.GetParamIDFromRequest(r, "id")
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -74,7 +74,7 @@ func (h *Handler) CategoryPutHandler(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) CategoryDeleteHandler(w http.ResponseWriter, r *http.Request) {
 
-	id, err := utils.GetIDFromRequest(r)
+	id, err := utils.GetParamIDFromRequest(r, "id")
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

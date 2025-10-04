@@ -10,10 +10,10 @@ import (
 type OrderService interface {
 	CreateOrder(userID uint, items []dto.Items) (*models.Order, error)
 	GetOrder(id uint) (*models.Order, error)
-	GetOrders() ([]models.Order, error)
-	GetOrdersByUserID(userID uint) ([]models.Order, error)
+	GetOrdersByUserID(userID uint) (*[]models.Order, error)
 	UpdateStatusOrder(id uint, status models.StatusOrder) (*models.Order, error)
 	DeleteOrder(id uint) error
+	DeleteProductFromOrder(orderID, productID uint) error
 }
 
 type orderService struct {
@@ -35,20 +35,8 @@ func (s *orderService) GetOrder(id uint) (*models.Order, error) {
 	return s.repo.GetOrder(id)
 }
 
-func (s *orderService) GetOrders() ([]models.Order, error) {
-	orders, err := s.repo.GetOrders()
-	if err != nil {
-		return nil, err
-	}
-	return *orders, nil
-}
-
-func (s *orderService) GetOrdersByUserID(userID uint) ([]models.Order, error) {
-	orders, err := s.repo.GetOrdersByUserID(userID)
-	if err != nil {
-		return nil, err
-	}
-	return *orders, nil
+func (s *orderService) GetOrdersByUserID(userID uint) (*[]models.Order, error) {
+	return s.repo.GetOrdersByUserID(userID)
 }
 
 func (s *orderService) UpdateStatusOrder(id uint, status models.StatusOrder) (*models.Order, error) {
@@ -57,4 +45,8 @@ func (s *orderService) UpdateStatusOrder(id uint, status models.StatusOrder) (*m
 
 func (s *orderService) DeleteOrder(id uint) error {
 	return s.repo.DeleteOrder(id)
+}
+
+func (s *orderService) DeleteProductFromOrder(orderID, productID uint) error {
+	return s.repo.DeleteProductFromOrder(orderID, productID)
 }

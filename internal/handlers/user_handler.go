@@ -37,7 +37,7 @@ func (h *Handler) UsersPostHandler(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) UserGetHandler(w http.ResponseWriter, r *http.Request) {
 
-	id, err := utils.GetIDFromRequest(r)
+	id, err := utils.GetParamIDFromRequest(r, "id")
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -74,7 +74,7 @@ func (h *Handler) UserPutHandler(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) UserDeleteHandler(w http.ResponseWriter, r *http.Request) {
 
-	id, err := utils.GetIDFromRequest(r)
+	id, err := utils.GetParamIDFromRequest(r, "id")
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

@@ -37,7 +37,7 @@ func (h *Handler) ProductsPostHandler(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) ProductGetHandler(w http.ResponseWriter, r *http.Request) {
 
-	id, err := utils.GetIDFromRequest(r)
+	id, err := utils.GetParamIDFromRequest(r, "id")
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -74,7 +74,7 @@ func (h *Handler) ProductPutHandler(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) ProductDeleteHandler(w http.ResponseWriter, r *http.Request) {
 
-	id, err := utils.GetIDFromRequest(r)
+	id, err := utils.GetParamIDFromRequest(r, "id")
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
