@@ -7,35 +7,35 @@ import (
 	"onlineShop/internal/utils"
 )
 
-func (h *Handler) UsersGetHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) ProductsGetHandler(w http.ResponseWriter, r *http.Request) {
 
-	users, err := h.service.User.GetUsers()
+	Products, err := h.service.Product.GetProducts()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(w).Encode(users)
+	json.NewEncoder(w).Encode(Products)
 
 }
 
-func (h *Handler) UsersPostHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) ProductsPostHandler(w http.ResponseWriter, r *http.Request) {
 
-	var user models.User
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+	var Product models.Product
+	if err := json.NewDecoder(r.Body).Decode(&Product); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	createdUser, err := h.service.User.CreateUser(&user)
+	createdProduct, err := h.service.Product.CreateProduct(&Product)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(createdUser)
+	json.NewEncoder(w).Encode(createdProduct)
 
 }
 
-func (h *Handler) UserGetHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) ProductGetHandler(w http.ResponseWriter, r *http.Request) {
 
 	id, err := utils.GetIDFromRequest(r)
 
@@ -44,35 +44,35 @@ func (h *Handler) UserGetHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.service.User.GetUser(id)
+	Product, err := h.service.Product.GetProduct(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(w).Encode(user)
+	json.NewEncoder(w).Encode(Product)
 
 }
 
-func (h *Handler) UserPutHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) ProductPutHandler(w http.ResponseWriter, r *http.Request) {
 
-	var user models.User
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+	var Product models.Product
+	if err := json.NewDecoder(r.Body).Decode(&Product); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	userUpdated, err := h.service.User.UpdateUser(&user)
+	ProductUpdated, err := h.service.Product.UpdateProduct(&Product)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(userUpdated)
+	json.NewEncoder(w).Encode(ProductUpdated)
 
 }
 
-func (h *Handler) UserDeleteHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) ProductDeleteHandler(w http.ResponseWriter, r *http.Request) {
 
 	id, err := utils.GetIDFromRequest(r)
 
@@ -81,7 +81,7 @@ func (h *Handler) UserDeleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.service.User.DeleteUser(id)
+	err = h.service.Product.DeleteProduct(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

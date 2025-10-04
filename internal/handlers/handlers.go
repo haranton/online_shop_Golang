@@ -16,17 +16,30 @@ func NewHandler(service *service.Service) *Handler {
 }
 
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
+
 	// Users
-	mux.HandleFunc("/api/users", h.UsersHandler) // GET, POST
-	/*mux.HandleFunc("/api/users/", h.UserHandler) // GET, PUT, DELETE
+	mux.HandleFunc("GET /api/users", h.UsersGetHandler)
+	mux.HandleFunc("POST /api/users", h.UsersPostHandler)
+
+	mux.HandleFunc("GET /api/users/{id}", h.UserGetHandler)
+	mux.HandleFunc("PUT /api/users/{id}", h.UserPutHandler)
+	mux.HandleFunc("DELETE /api/users/{id}", h.UserDeleteHandler)
 
 	// Products
-	mux.HandleFunc("/api/products", h.ProductsHandler) // GET, POST
-	mux.HandleFunc("/api/products/", h.ProductHandler) // GET, PUT, DELETE
+	mux.HandleFunc("GET /api/products", h.ProductsGetHandler)
+	mux.HandleFunc("POST /api/products", h.ProductsPostHandler)
+
+	mux.HandleFunc("GET /api/products/{id}", h.ProductGetHandler)
+	mux.HandleFunc("PUT /api/products/{id}", h.ProductPutHandler)
+	mux.HandleFunc("DELETE /api/products/{id}", h.ProductDeleteHandler)
 
 	// Categories
-	mux.HandleFunc("/api/categories", h.CategoriesHandler)
-	mux.HandleFunc("/api/categories/", h.CategoryHandler)
+	mux.HandleFunc("GET /api/Categories", h.ProductsGetHandler)
+	mux.HandleFunc("POST /api/Categories", h.ProductsPostHandler)
+
+	mux.HandleFunc("GET /api/Categories/{id}", h.ProductGetHandler)
+	mux.HandleFunc("PUT /api/Categories/{id}", h.ProductPutHandler)
+	mux.HandleFunc("DELETE /api/Categories/{id}", h.ProductDeleteHandler)
 
 	// Orders
 	mux.HandleFunc("/api/orders", h.OrdersHandler) // GET, POST

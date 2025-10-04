@@ -7,35 +7,35 @@ import (
 	"onlineShop/internal/utils"
 )
 
-func (h *Handler) UsersGetHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CategoriesGetHandler(w http.ResponseWriter, r *http.Request) {
 
-	users, err := h.service.User.GetUsers()
+	Categories, err := h.service.Category.GetCategories()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(w).Encode(users)
+	json.NewEncoder(w).Encode(Categories)
 
 }
 
-func (h *Handler) UsersPostHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CategoriesPostHandler(w http.ResponseWriter, r *http.Request) {
 
-	var user models.User
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+	var Category models.Category
+	if err := json.NewDecoder(r.Body).Decode(&Category); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	createdUser, err := h.service.User.CreateUser(&user)
+	createdCategory, err := h.service.Category.CreateCategory(&Category)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(createdUser)
+	json.NewEncoder(w).Encode(createdCategory)
 
 }
 
-func (h *Handler) UserGetHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CategoryGetHandler(w http.ResponseWriter, r *http.Request) {
 
 	id, err := utils.GetIDFromRequest(r)
 
@@ -44,35 +44,35 @@ func (h *Handler) UserGetHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.service.User.GetUser(id)
+	Category, err := h.service.Category.GetCategory(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(w).Encode(user)
+	json.NewEncoder(w).Encode(Category)
 
 }
 
-func (h *Handler) UserPutHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CategoryPutHandler(w http.ResponseWriter, r *http.Request) {
 
-	var user models.User
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+	var Category models.Category
+	if err := json.NewDecoder(r.Body).Decode(&Category); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	userUpdated, err := h.service.User.UpdateUser(&user)
+	CategoryUpdated, err := h.service.Category.UpdateCategory(&Category)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(userUpdated)
+	json.NewEncoder(w).Encode(CategoryUpdated)
 
 }
 
-func (h *Handler) UserDeleteHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CategoryDeleteHandler(w http.ResponseWriter, r *http.Request) {
 
 	id, err := utils.GetIDFromRequest(r)
 
@@ -81,7 +81,7 @@ func (h *Handler) UserDeleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.service.User.DeleteUser(id)
+	err = h.service.Category.DeleteCategory(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
