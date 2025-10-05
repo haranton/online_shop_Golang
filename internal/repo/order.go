@@ -77,15 +77,6 @@ func (repo *Repository) GetOrder(id uint) (*models.Order, error) {
 	return &order, nil
 }
 
-func (repo *Repository) GetOrders() (*[]models.Order, error) {
-
-	var orders []models.Order
-	if err := repo.db.Find(&orders).Error; err != nil {
-		return nil, err
-	}
-	return &orders, nil
-}
-
 func (repo *Repository) UpdateStatusOrder(id uint, status models.StatusOrder) (*models.Order, error) {
 
 	var order models.Order

@@ -4,43 +4,23 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
-	"net/http/httptest"
-	"onlineShop/internal/config"
-	"onlineShop/internal/db"
-	"onlineShop/internal/handlers"
-	"onlineShop/internal/repo"
-	"onlineShop/internal/service"
+	"onlineShop/internal/models"
 	"testing"
 )
 
 func TestCreateUserIntegration(t *testing.T) {
-	cfg := config.LoadConfig()
-	cfg.DBName = "db_test"
 
-	db.RunMigrations(cfg)
+	cfg, err := SetupTestEnv()
 
-	database := db.GetDB(cfg)
-	if database == nil {
-		t.Fatal("failed to connect to database")
+	if err != nil {
+		t.Fatalf("failed to setup env: %v", err)
 	}
-
-	if err := database.Exec("DELETE FROM users;").Error; err != nil {
-		t.Fatalf("failed to clear users table: %v", err)
-	}
-
-	repository := repo.NewReposytory(database)
-	services := service.NewService(repository)
-	h := handlers.NewHandler(services)
-
-	mux := http.NewServeMux()
-	h.RegisterRoutes(mux)
-	server := httptest.NewServer(mux)
-	defer server.Close()
+	defer cfg.TeardownTestEnv()
 
 	user := map[string]string{"login": "Alice", "password": "123"}
 	body, _ := json.Marshal(user)
 
-	resp, err := http.Post(server.URL+"/api/users", "application/json", bytes.NewReader(body))
+	resp, err := http.Post(cfg.Server.URL+"/api/users", "application/json", bytes.NewReader(body))
 	if err != nil {
 		t.Fatalf("failed to send request: %v", err)
 	}
@@ -51,13 +31,43 @@ func TestCreateUserIntegration(t *testing.T) {
 	}
 
 	var count int
-	err = database.Raw("SELECT COUNT(*) FROM users WHERE login = 'Alice' and password = '123'").Scan(&count).Error
+	err = cfg.DB.Raw("SELECT COUNT(*) FROM users WHERE login = 'Alice' and password = '123'").Scan(&count).Error
 	if err != nil {
 		t.Fatalf("failed to check DB: %v", err)
 	}
 
 	if count != 1 {
 		t.Errorf("expected 1 record, got %d", count)
+	}
+
+	/// GET /users
+	resp, err = http.Get(cfg.Server.URL + "/api/users")
+	if err != nil {
+		t.Fatalf("failed to send request: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("expected status 200, got %d", resp.StatusCode)
+	}
+
+	var users []models.User
+	if err := getBodyFromResponse(resp, &users); err != nil {
+		t.Fatalf("failed to parse user response: %v", err)
+	}
+
+	if len(users) != 1 {
+		t.Fatalf("failed to check count users in GET users: %v", err)
+	}
+
+	/// GET /users/{id}
+	resp, err = http.Get(cfg.Server.URL + "/api/users/1")
+
+	var userResp models.User
+	getBodyFromResponse(resp, &userResp)
+
+	if userResp.Login != "Alice" {
+		t.Fatalf("expected other login ,got %v", userResp.Login)
 	}
 
 }

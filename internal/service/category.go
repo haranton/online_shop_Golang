@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"onlineShop/internal/models"
 	"onlineShop/internal/repo"
 )
@@ -22,6 +23,10 @@ func NewCategoryService(r *repo.Repository) CategoryService {
 }
 
 func (s *categoryService) CreateCategory(category *models.Category) (*models.Category, error) {
+
+	if category.Name == "" {
+		return nil, fmt.Errorf("category name cannot be empty")
+	}
 	return s.repo.CreateCategories(category)
 }
 

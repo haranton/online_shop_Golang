@@ -34,12 +34,12 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("DELETE /api/products/{id}", h.ProductDeleteHandler)
 
 	// Categories
-	mux.HandleFunc("GET /api/Categories", h.ProductsGetHandler)
-	mux.HandleFunc("POST /api/Categories", h.ProductsPostHandler)
+	mux.HandleFunc("GET /api/categories", h.CategoriesGetHandler)
+	mux.HandleFunc("POST /api/categories", h.CategoriesPostHandler)
 
-	mux.HandleFunc("GET /api/Categories/{id}", h.ProductGetHandler)
-	mux.HandleFunc("PUT /api/Categories/{id}", h.ProductPutHandler)
-	mux.HandleFunc("DELETE /api/Categories/{id}", h.ProductDeleteHandler)
+	mux.HandleFunc("GET /api/categories/{id}", h.CategoryGetHandler)
+	mux.HandleFunc("PUT /api/categories/{id}", h.CategoryPutHandler)
+	mux.HandleFunc("DELETE /api/categories/{id}", h.CategoryDeleteHandler)
 
 	// Orders
 	mux.HandleFunc("POST /api/orders", h.OrdersPostHandler)
