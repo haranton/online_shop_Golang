@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+	"fmt"
 	"onlineShop/internal/models"
 	"onlineShop/internal/repo"
 )
@@ -22,6 +24,15 @@ func NewProductService(r *repo.Repository) ProductService {
 }
 
 func (s *productService) CreateProduct(product *models.Product) (*models.Product, error) {
+
+	if product.Count < 0 {
+		return nil, errors.New("count cannot be negative")
+	}
+
+	if product.Name == "" {
+		return nil, fmt.Errorf("category name cannot be empty")
+	}
+
 	return s.repo.CreateProduct(product)
 }
 
