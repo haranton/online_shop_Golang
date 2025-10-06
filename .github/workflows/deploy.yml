@@ -16,6 +16,8 @@ jobs:
 
       - name: Setup SSH key
         run: |
+          sudo apt-get update
+          sudo apt-get install -y openssh-client
           echo "SSH_HOST='${{ vars.SSH_ROOT_HOST }}'"
           echo "SSH_PORT='${{ vars.SSH_ROOT_PORT }}'"
           mkdir -p ~/.ssh
