@@ -58,7 +58,9 @@ jobs:
               cd /root/app
               git pull
             fi      
-            cd /root/app      
+            cd /root/app
+
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             docker-compose pull
             docker-compose up -d --build
 
