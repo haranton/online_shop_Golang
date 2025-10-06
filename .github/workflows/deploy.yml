@@ -37,24 +37,33 @@ jobs:
           key: ${{ secrets.SSH_ROOT_KEY }}
           port: ${{ secrets.SSH_ROOT_PORT }}
           script: |
+            set -e
+            # Проверка и установка docker-compose
             if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/null; then
-              echo "docker-compose not found, installing..."
-              # Установка плагина docker-compose (Ubuntu / Debian)
-              apt-get update
-              apt-get install -y docker-compose-plugin
-              # Либо fallback: классический docker-compose
+              echo "Installing Docker Compose..."
+              apt-get update -y
+              apt-get install -y curl docker-compose-plugin
+              # Если плагин не появился — установить бинарник вручную
               if ! command -v docker compose &> /dev/null; then
-                curl -SL "https://github.com/docker/compose/releases/download/v2.39.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                curl -SL "https://github.com/docker/compose/releases/download/v2.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
                 chmod +x /usr/local/bin/docker-compose
               fi
             fi
-            # если директория ещё не существует — клонировать
+            # Проверяем, что compose установлен
+            docker compose version || docker-compose version
+            # Клонируем / обновляем репозиторий
             if [ ! -d /root/app ]; then
               git clone https://github.com/haranton/online_shop_Golang.git /root/app
             else
               cd /root/app
               git pull
+            fi      
+            cd /root/app      
+            # Используем доступную команду
+            if command -v docker compose &> /dev/null; then
+              docker compose pull
+              docker compose up -d --build
+            else
+              docker-compose pull
+              docker-compose up -d --build
             fi
-            cd /root/app
-            docker compose pull
-            docker compose up -d --build
