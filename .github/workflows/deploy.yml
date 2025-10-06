@@ -18,24 +18,24 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y openssh-client
-          echo "SSH_HOST='${{ vars.SSH_ROOT_HOST }}'"
-          echo "SSH_PORT='${{ vars.SSH_ROOT_PORT }}'"
+          echo "SSH_HOST='${{ secrets.SSH_ROOT_HOST }}'"
+          echo "SSH_PORT='${{ secrets.SSH_ROOT_PORT }}'"
           mkdir -p ~/.ssh
-          echo "${{ vars.SSH_ROOT_KEY }}" > ~/.ssh/id_ed25519
+          echo "${{ secrets.SSH_ROOT_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          if [ -z "${{ vars.SSH_ROOT_PORT }}" ]; then
-            ssh-keyscan -H ${{ vars.SSH_ROOT_HOST }} >> ~/.ssh/known_hosts
+          if [ -z "${{ secrets.SSH_ROOT_PORT }}" ]; then
+            ssh-keyscan -H ${{ secrets.SSH_ROOT_HOST }} >> ~/.ssh/known_hosts
           else
-            ssh-keyscan -H -p ${{ vars.SSH_ROOT_PORT }} ${{ vars.SSH_ROOT_HOST }} >> ~/.ssh/known_hosts
+            ssh-keyscan -H -p ${{ secrets.SSH_ROOT_PORT }} ${{ secrets.SSH_ROOT_HOST }} >> ~/.ssh/known_hosts
           fi
 
       - name: Deploy via Git pull on server
         uses: appleboy/ssh-action@v1.2.2
         with:
-          host: ${{ vars.SSH_ROOT_HOST }}
+          host: ${{ secrets.SSH_ROOT_HOST }}
           username: root
-          key: ${{ vars.SSH_ROOT_KEY }}
-          port: ${{ vars.SSH_ROOT_PORT }}
+          key: ${{ secrets.SSH_ROOT_KEY }}
+          port: ${{ secrets.SSH_ROOT_PORT }}
           script: |
             # если директория ещё не существует — клонировать
             if [ ! -d /root/app ]; then
