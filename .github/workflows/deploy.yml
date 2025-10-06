@@ -16,34 +16,22 @@ jobs:
 
       - name: Setup SSH key
         run: |
-          echo "Host: ${{ secrets.SSH_ROOT_HOST }}"
-          echo "Port: ${{ secrets.SSH_ROOT_PORT }}"
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_ROOT_KEY }}" > ~/.ssh/id_ed25519
+          echo "${{ vars.SSH_ROOT_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H -p ${{ secrets.SSH_ROOT_PORT }} ${{ secrets.SSH_ROOT_HOST }} >> ~/.ssh/known_hosts
-
-      - name: Debug SSH setup
-        run: |
-          echo "Host: ${{ secrets.SSH_ROOT_HOST }}"
-          echo "Port: ${{ secrets.SSH_ROOT_PORT }}"
-          # Проверим, что файл ключа существует
-          if [ -f ~/.ssh/id_ed25519 ]; then
-            echo "SSH key file present"
+          if [ -z "${{ vars.SSH_ROOT_PORT }}" ]; then
+            ssh-keyscan -H ${{ vars.SSH_ROOT_HOST }} >> ~/.ssh/known_hosts
           else
-            echo "SSH key file missing"
-            exit 1
+            ssh-keyscan -H -p ${{ vars.SSH_ROOT_PORT }} ${{ vars.SSH_ROOT_HOST }} >> ~/.ssh/known_hosts
           fi
-          # Попробуем выполнить команду просто для проверки соединения (без выполнения docker)
-          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no -p ${{ secrets.SSH_ROOT_PORT }} root@${{ secrets.SSH_ROOT_HOST }} "echo SSH connection OK"
 
       - name: Copy files to server
         uses: appleboy/scp-action@v1
         with:
-          host: ${{ secrets.SSH_ROOT_HOST }}
+          host: ${{ vars.SSH_ROOT_HOST }}
           username: root
-          key: ${{ secrets.SSH_ROOT_KEY }}
-          port: ${{ secrets.SSH_ROOT_PORT }}
+          key: ${{ vars.SSH_ROOT_KEY }}
+          port: ${{ vars.SSH_ROOT_PORT }}
           source: |
             docker-compose.yml
             .env
@@ -53,10 +41,10 @@ jobs:
       - name: Deploy with docker-compose
         uses: appleboy/ssh-action@v1.2.2
         with:
-          host: ${{ secrets.SSH_ROOT_HOST }}
+          host: ${{ vars.SSH_ROOT_HOST }}
           username: root
-          key: ${{ secrets.SSH_ROOT_KEY }}
-          port: ${{ secrets.SSH_ROOT_PORT }}
+          key: ${{ vars.SSH_ROOT_KEY }}
+          port: ${{ vars.SSH_ROOT_PORT }}
           script: |
             cd /root/app
             docker compose pull
