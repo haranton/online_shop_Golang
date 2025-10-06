@@ -37,7 +37,7 @@ jobs:
           script: |
             # если директория ещё не существует — клонировать
             if [ ! -d /root/app ]; then
-              git clone https://github.com/ваш-аккаунт/ваш-репо.git /root/app
+              git clone https://github.com/haranton/online_shop_Golang.git /root/app
             else
               cd /root/app
               git pull
