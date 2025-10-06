@@ -3,6 +3,10 @@ package handlers
 import (
 	"net/http"
 	"onlineShop/internal/service"
+
+	_ "onlineShop/docs"
+
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 type Handler struct {
@@ -16,6 +20,8 @@ func NewHandler(service *service.Service) *Handler {
 }
 
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
+
+	mux.Handle("/swagger/", httpSwagger.WrapHandler)
 
 	// Users
 	mux.HandleFunc("GET /api/users", h.UsersGetHandler)
