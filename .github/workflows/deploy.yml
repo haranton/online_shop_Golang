@@ -22,7 +22,7 @@ jobs:
           ssh-keyscan -p ${{ secrets.SSH_ROOT_PORT }} ${{ secrets.SSH_ROOT_HOST }} >> ~/.ssh/known_hosts
 
       - name: Copy files to server
-        uses: appleboy/scp-action@v0.1.7
+        uses: appleboy/scp-action@v1
         with:
           host: ${{ secrets.SSH_ROOT_HOST }}
           username: root
@@ -35,7 +35,7 @@ jobs:
           target: /root/app
 
       - name: Deploy with docker-compose
-        uses: appleboy/ssh-action@v1.5.0
+        uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.SSH_ROOT_HOST }}
           username: root
