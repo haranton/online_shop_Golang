@@ -16,6 +16,8 @@ jobs:
 
       - name: Setup SSH key
         run: |
+          echo "SSH_HOST='${{ vars.SSH_ROOT_HOST }}'"
+          echo "SSH_PORT='${{ vars.SSH_ROOT_PORT }}'"
           mkdir -p ~/.ssh
           echo "${{ vars.SSH_ROOT_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
