@@ -32,10 +32,10 @@ jobs:
       - name: Deploy via Git pull on server
         uses: appleboy/ssh-action@v1.2.2
         with:
-          host: ${{ secrets.SSH_ROOT_HOST }}
+          host: ${{ vars.SSH_ROOT_HOST }}
           username: root
-          key: ${{ secrets.SSH_ROOT_KEY }}
-          port: ${{ secrets.SSH_ROOT_PORT }}
+          key: ${{ vars.SSH_ROOT_KEY }}
+          port: ${{ vars.SSH_ROOT_PORT }}
           script: |
             # если директория ещё не существует — клонировать
             if [ ! -d /root/app ]; then
