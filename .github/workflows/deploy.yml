@@ -39,16 +39,16 @@ jobs:
           script: |
             set -e
             # Проверка и установка docker-compose
-            if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/null; then
-              echo "Installing Docker Compose..."
-              apt-get update -y
-              apt-get install -y curl docker-compose-plugin
-              # Если плагин не появился — установить бинарник вручную
-              if ! command -v docker compose &> /dev/null; then
-                curl -SL "https://github.com/docker/compose/releases/download/v2.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-                chmod +x /usr/local/bin/docker-compose
-              fi
-            fi
+            # if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/null; then
+            #   echo "Installing Docker Compose..."
+            #   apt-get update -y
+            #   apt-get install -y curl docker-compose-plugin
+            #   # Если плагин не появился — установить бинарник вручную
+            #   if ! command -v docker compose &> /dev/null; then
+            #     curl -SL "https://github.com/docker/compose/releases/download/v2.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            #     chmod +x /usr/local/bin/docker-compose
+            #   fi
+            # fi
             # Проверяем, что compose установлен
             docker compose version || docker-compose version
             # Клонируем / обновляем репозиторий
@@ -61,6 +61,6 @@ jobs:
             cd /root/app
 
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-            docker-compose pull
-            docker-compose up -d --build
+            docker compose pull
+            docker compose up -d --build
 
