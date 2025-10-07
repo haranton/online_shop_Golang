@@ -20,19 +20,19 @@ func TestProducts(t *testing.T) {
 
 	var products []map[string]any
 	products = append(products, map[string]any{
-		"name":       "43242",
-		"count":      10,
-		"CategoryID": 1,
+		"name":        "43242",
+		"count":       10,
+		"category_id": 1,
 	})
 	products = append(products, map[string]any{
-		"name":       "Smartphone",
-		"count":      10,
-		"CategoryID": 1,
+		"name":        "Smartphone",
+		"count":       10,
+		"category_id": 1,
 	})
 	products = append(products, map[string]any{
-		"name":       "Book",
-		"count":      10,
-		"CategoryID": 1,
+		"name":        "Book",
+		"count":       10,
+		"category_id": 1,
 	})
 
 	categoriesPost := map[string]string{"name": "Electronics"}

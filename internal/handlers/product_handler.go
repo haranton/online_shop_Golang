@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"onlineShop/internal/dto"
 	"onlineShop/internal/models"
 	"onlineShop/internal/utils"
 )
@@ -38,7 +39,7 @@ func (h *Handler) ProductsGetHandler(w http.ResponseWriter, r *http.Request) {
 // @Failure      500      {string}  string "Ошибка сервера"
 // @Router       /api/products [post]
 func (h *Handler) ProductsPostHandler(w http.ResponseWriter, r *http.Request) {
-	var product models.Product
+	var product dto.ProductRequest
 	if err := json.NewDecoder(r.Body).Decode(&product); err != nil {
 		h.logger.Error("failed to decode product", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)

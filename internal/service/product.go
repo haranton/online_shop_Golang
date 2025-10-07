@@ -3,12 +3,13 @@ package service
 import (
 	"errors"
 	"fmt"
+	"onlineShop/internal/dto"
 	"onlineShop/internal/models"
 	"onlineShop/internal/repo"
 )
 
 type ProductService interface {
-	CreateProduct(product *models.Product) (*models.Product, error)
+	CreateProduct(product *dto.ProductRequest) (*models.Product, error)
 	GetProduct(id uint) (*models.Product, error)
 	GetProducts() ([]models.Product, error)
 	UpdateProduct(product *models.Product) (*models.Product, error)
@@ -23,7 +24,7 @@ func NewProductService(r *repo.Repository) ProductService {
 	return &productService{repo: r}
 }
 
-func (s *productService) CreateProduct(product *models.Product) (*models.Product, error) {
+func (s *productService) CreateProduct(product *dto.ProductRequest) (*models.Product, error) {
 
 	if product.Count < 0 {
 		return nil, errors.New("count cannot be negative")
@@ -33,7 +34,13 @@ func (s *productService) CreateProduct(product *models.Product) (*models.Product
 		return nil, fmt.Errorf("category name cannot be empty")
 	}
 
-	return s.repo.CreateProduct(product)
+	newProduct := models.Product{
+		Name:       product.Name,
+		CategoryID: product.CategoryID,
+		Count:      product.Count,
+	}
+
+	return s.repo.CreateProduct(&newProduct)
 }
 
 func (s *productService) GetProduct(id uint) (*models.Product, error) {

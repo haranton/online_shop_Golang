@@ -3,6 +3,7 @@ package tests
 import (
 	"bytes"
 	"encoding/json"
+	"io"
 	"net/http"
 	"onlineShop/internal/models"
 	"testing"
@@ -14,37 +15,51 @@ func TestOrders(t *testing.T) {
 		t.Fatalf("failed to load env: %v", err)
 	}
 
-	t.Log("orders tests")
+	t.Log(" Starting orders integration test")
 
 	// === 1. Создаём категорию ===
 	category := map[string]string{"name": "Electronics"}
 	body, _ := json.Marshal(category)
 	resp, err := http.Post(cfg.Server.URL+"/api/categories", "application/json", bytes.NewReader(body))
 	if err != nil {
-		t.Fatalf("failed to send request: %v", err)
+		t.Fatalf("failed to send category request: %v", err)
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusCreated {
-		t.Fatalf("expected 201, got %d", resp.StatusCode)
+
+	var categoryResp struct {
+		ID uint `json:"id"`
 	}
+	if err := json.NewDecoder(resp.Body).Decode(&categoryResp); err != nil {
+		t.Fatalf("failed to decode category response: %v", err)
+	}
+	t.Logf("Category created with ID %d", categoryResp.ID)
+
+	if resp.StatusCode != http.StatusCreated {
+		respBody, _ := io.ReadAll(resp.Body)
+		t.Fatalf("expected 201, got %d, body: %s", resp.StatusCode, string(respBody))
+	}
+	t.Log("Category created")
 
 	// === 2. Создаём продукты ===
 	products := []map[string]any{
-		{"name": "Smartphone", "count": 10, "CategoryID": 1},
-		{"name": "Book", "count": 5, "CategoryID": 1},
+		{"name": "Smartphone", "count": 10, "category_id": 1},
+		{"name": "Book", "count": 5, "category_id": 1},
 	}
+
 	for _, product := range products {
 		productJSON, _ := json.Marshal(product)
 		resp, err := http.Post(cfg.Server.URL+"/api/products", "application/json", bytes.NewReader(productJSON))
 		if err != nil {
-			t.Fatalf("failed to send request: %v", err)
+			t.Fatalf("failed to send product request: %v", err)
 		}
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusCreated {
-			t.Fatalf("expected status 201, got: %v", resp.StatusCode)
+			respBody, _ := io.ReadAll(resp.Body)
+			t.Fatalf("expected 201, got %d, body: %s", resp.StatusCode, string(respBody))
 		}
 	}
+	t.Log("Products created")
 
 	// === 3. Создаём пользователя ===
 	user := map[string]string{
@@ -57,17 +72,19 @@ func TestOrders(t *testing.T) {
 		t.Fatalf("failed to send user request: %v", err)
 	}
 	defer resp.Body.Close()
+
 	if resp.StatusCode != http.StatusCreated {
-		t.Fatalf("expected 201, got %d", resp.StatusCode)
+		respBody, _ := io.ReadAll(resp.Body)
+		t.Fatalf("expected 201, got %d, body: %s", resp.StatusCode, string(respBody))
 	}
+	t.Log("User created")
 
 	// === 4. Создаём заказ ===
 	order := map[string]any{
-		"status":  "New",
 		"user_id": 1,
 		"items": []map[string]any{
-			{"productID": 1, "quantity": 2},
-			{"productID": 2, "quantity": 1},
+			{"product_id": 1, "quantity": 2},
+			{"product_id": 2, "quantity": 1},
 		},
 	}
 	orderBody, _ := json.Marshal(order)
@@ -78,8 +95,10 @@ func TestOrders(t *testing.T) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusCreated {
-		t.Fatalf("expected status 201, got %d", resp.StatusCode)
+		respBody, _ := io.ReadAll(resp.Body)
+		t.Fatalf("expected 201, got %d, body: %s", resp.StatusCode, string(respBody))
 	}
+	t.Log("Order created")
 
 	// === 5. Проверяем наличие заказов и связей в БД ===
 	var ordersDB []models.Order
@@ -87,7 +106,6 @@ func TestOrders(t *testing.T) {
 	if result.Error != nil {
 		t.Fatalf("failed to query orders: %v", result.Error)
 	}
-
 	if len(ordersDB) != 1 {
 		t.Fatalf("expected 1 order, got %d", len(ordersDB))
 	}
@@ -97,10 +115,10 @@ func TestOrders(t *testing.T) {
 	if result.Error != nil {
 		t.Fatalf("failed to query order_products: %v", result.Error)
 	}
-
 	if len(orderProductsDB) != 2 {
 		t.Fatalf("expected 2 order_products, got %d", len(orderProductsDB))
 	}
 
-	t.Log("orders test passed")
+	t.Log("Orders and related products verified")
+	t.Log("Orders integration test passed successfully")
 }

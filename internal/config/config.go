@@ -3,6 +3,7 @@ package config
 import (
 	"log/slog"
 	"os"
+	"path/filepath"
 
 	"github.com/joho/godotenv"
 )
@@ -17,18 +18,32 @@ type Config struct {
 	ENV        string
 }
 
-// LoadConfig принимает логгер как параметр
+// LoadConfig загружает конфигурацию из .env или переменных окружения
 func LoadConfig(logger *slog.Logger) *Config {
-	paths := []string{".env", "../.env"}
-	var err error
+	// Определяем, где находимся
+	cwd, _ := os.Getwd()
+	logger.Debug("Current working directory", "cwd", cwd)
+
+	// Возможные пути для поиска .env (покрывает тесты и прод)
+	paths := []string{
+		".env",
+		"../.env",
+		"../../.env",
+		"/app/.env", // на случай, если контейнер в Docker-контексте
+	}
+
+	var loadedPath string
 	for _, path := range paths {
-		err = godotenv.Load(path)
-		if err == nil {
-			logger.Debug("Loaded environment file", "path", path)
-			break
+		if _, err := os.Stat(path); err == nil {
+			if err := godotenv.Load(path); err == nil {
+				loadedPath, _ = filepath.Abs(path)
+				logger.Info("Loaded .env file", "path", loadedPath)
+				break
+			}
 		}
 	}
-	if err != nil {
+
+	if loadedPath == "" {
 		logger.Warn(".env file not found, using system environment variables")
 	}
 
