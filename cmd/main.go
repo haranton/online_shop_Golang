@@ -8,6 +8,8 @@ import (
 	"onlineShop/internal/logger"
 	"onlineShop/internal/repo"
 	"onlineShop/internal/service"
+
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -15,24 +17,45 @@ func main() {
 	log := logger.GetLogger("DEBUG")
 
 	// Загрузка конфигурации
-	config := config.LoadConfig(log)
+	cfg := config.LoadConfig(log)
 
 	// Обновляем логгер с правильным уровнем из конфига
-	log = logger.GetLogger(config.ENV)
+	log = logger.GetLogger(cfg.ENV)
 
-	connectDb := db.GetDB(config, log)
-	db.RunMigrations(config, log)
+	connectDb := db.GetDB(cfg, log)
+	db.RunMigrations(cfg, log)
 
-	//todo repository, service, handler
-	repo := repo.NewReposytory(connectDb, log)
-	service := service.NewService(repo)
-	handlers := handlers.NewHandler(service, log)
+	// Инициализация слоев приложения
+	repository := repo.NewReposytory(connectDb, log)
+	services := service.NewService(repository)
+	handler := handlers.NewHandler(services, log)
 
 	mux := http.NewServeMux()
-	handlers.RegisterRoutes(mux)
+	handler.RegisterRoutes(mux)
 
-	log.Info("Server is running on port", config.AppPort)
-	if err := http.ListenAndServe(":"+config.AppPort, mux); err != nil {
-		log.Error("Failed to start server:", err)
+	// Настройка CORS
+	corsHandler := cors.New(cors.Options{
+		AllowedOrigins: []string{
+			"http://localhost:3000", // React dev server
+			"http://localhost:5173", // Vite dev server
+			"http://localhost:8080", // Ваш backend (если нужно)
+		},
+		AllowedMethods: []string{
+			"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH",
+		},
+		AllowedHeaders: []string{
+			"Accept", "Content-Type", "Content-Length",
+			"Authorization", "X-CSRF-Token", "X-Requested-With",
+		},
+		AllowCredentials: true,
+		Debug:            cfg.ENV == "DEBUG", // Логи только в режиме отладки
+	})
+
+	// Обертываем mux в CORS handler
+	handlerWithCORS := corsHandler.Handler(mux)
+
+	log.Info("Server is running on port", "port", cfg.AppPort)
+	if err := http.ListenAndServe(":"+cfg.AppPort, handlerWithCORS); err != nil {
+		log.Error("Failed to start server", "error", err)
 	}
 }
