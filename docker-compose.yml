@@ -42,6 +42,8 @@ services:
       context: .
       dockerfile: dockerfile
       target: builder 
+    env_file:
+    - .env
     depends_on:
       db:
         condition: service_healthy
