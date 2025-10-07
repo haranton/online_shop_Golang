@@ -1,6 +1,16 @@
--- Создаем базу данных если не существует
-SELECT 'CREATE DATABASE db'
-WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'db')\gexec
+-- init.sql
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'db') THEN
+        CREATE DATABASE db;
+    END IF;
+END
+$$;
 
-SELECT 'CREATE DATABASE db_test'
-WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'db_test')\gexec
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'db_test') THEN
+        CREATE DATABASE db_test;
+    END IF;
+END
+$$;
