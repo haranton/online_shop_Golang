@@ -37,14 +37,6 @@ services:
       retries: 20
     restart: unless-stopped
 
-    command: >
-      bash -c "
-        docker-entrypoint.sh postgres &
-        sleep 5 &&
-        psql -U db -d db -c 'CREATE DATABASE db_test;' &&
-        wait
-      "
-
   tests:
     build:
       context: .
