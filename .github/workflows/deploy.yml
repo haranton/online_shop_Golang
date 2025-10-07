@@ -21,7 +21,8 @@ jobs:
       - name: Run tests with docker-compose
         run: |
           cd $GITHUB_WORKSPACE
-          docker compose -f docker-compose.yml --profile test up --build --abort-on-container-exit tests
+          git pull
+          docker compose -f docker-compose.yml --profile test up --build --abort-on-container-exit --attach-dependencies tests
           docker compose down -v
 
   # --- 2. Деплой ---
