@@ -37,5 +37,16 @@ services:
       retries: 10
     restart: unless-stopped
 
+  tests:
+    build:
+      context: .
+      dockerfile: dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://db:db@db:5432/db_test?sslmode=disable
+    command: sh -c "go test -v ./internal/tests"
+
 volumes:
   postgres_data:
