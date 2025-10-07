@@ -12,16 +12,16 @@ import (
 // @Description  Возвращает список всех доступных товаров
 // @Tags         Products
 // @Produce      json
-// @Success      200  {array}   models.Product
+// @Success      200  {array}   dto.ProductResponse
 // @Failure      500  {string}  string "Ошибка сервера"
 // @Router       /api/products [get]
 func (h *Handler) ProductsGetHandler(w http.ResponseWriter, r *http.Request) {
-	Products, err := h.service.Product.GetProducts()
+	products, err := h.service.Product.GetProducts()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(w).Encode(Products)
+	json.NewEncoder(w).Encode(products)
 }
 
 // ProductsPostHandler godoc
@@ -30,18 +30,18 @@ func (h *Handler) ProductsGetHandler(w http.ResponseWriter, r *http.Request) {
 // @Tags         Products
 // @Accept       json
 // @Produce      json
-// @Param        product  body      models.Product  true  "Данные нового товара"
-// @Success      201      {object}  models.Product
+// @Param        product  body      dto.ProductRequest  true  "Данные нового товара"
+// @Success      201      {object}  dto.ProductResponse
 // @Failure      400      {string}  string "Некорректные данные"
 // @Failure      500      {string}  string "Ошибка сервера"
 // @Router       /api/products [post]
 func (h *Handler) ProductsPostHandler(w http.ResponseWriter, r *http.Request) {
-	var Product models.Product
-	if err := json.NewDecoder(r.Body).Decode(&Product); err != nil {
+	var product models.Product
+	if err := json.NewDecoder(r.Body).Decode(&product); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	createdProduct, err := h.service.Product.CreateProduct(&Product)
+	createdProduct, err := h.service.Product.CreateProduct(&product)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -56,7 +56,7 @@ func (h *Handler) ProductsPostHandler(w http.ResponseWriter, r *http.Request) {
 // @Tags         Products
 // @Produce      json
 // @Param        id   path      int  true  "ID товара"
-// @Success      200  {object}  models.Product
+// @Success      200  {object}  dto.ProductResponse
 // @Failure      400  {string}  string "Некорректный ID"
 // @Failure      500  {string}  string "Ошибка сервера"
 // @Router       /api/products/{id} [get]
@@ -67,12 +67,12 @@ func (h *Handler) ProductGetHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Product, err := h.service.Product.GetProduct(id)
+	product, err := h.service.Product.GetProduct(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(w).Encode(Product)
+	json.NewEncoder(w).Encode(product)
 }
 
 // ProductPutHandler godoc
@@ -81,26 +81,27 @@ func (h *Handler) ProductGetHandler(w http.ResponseWriter, r *http.Request) {
 // @Tags         Products
 // @Accept       json
 // @Produce      json
-// @Param        product  body      models.Product  true  "Обновленные данные товара"
-// @Success      200      {object}  models.Product
+// @Param        id       path      int               true  "ID товара"
+// @Param        product  body      dto.ProductRequest true  "Обновленные данные товара"
+// @Success      200      {object}  dto.ProductResponse
 // @Failure      400      {string}  string "Некорректные данные"
 // @Failure      500      {string}  string "Ошибка сервера"
 // @Router       /api/products/{id} [put]
 func (h *Handler) ProductPutHandler(w http.ResponseWriter, r *http.Request) {
-	var Product models.Product
-	if err := json.NewDecoder(r.Body).Decode(&Product); err != nil {
+	var product models.Product
+	if err := json.NewDecoder(r.Body).Decode(&product); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	ProductUpdated, err := h.service.Product.UpdateProduct(&Product)
+	productUpdated, err := h.service.Product.UpdateProduct(&product)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(ProductUpdated)
+	json.NewEncoder(w).Encode(productUpdated)
 }
 
 // ProductDeleteHandler godoc

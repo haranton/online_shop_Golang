@@ -1,7 +1,19 @@
 definitions:
+  dto.CategoryRequest:
+    properties:
+      name:
+        type: string
+    type: object
+  dto.CategoryResponse:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
   dto.Items:
     properties:
-      productID:
+      product_id:
         type: integer
       quantity:
         type: integer
@@ -15,55 +27,45 @@ definitions:
       user_id:
         type: integer
     type: object
+  dto.OrderItemDetail:
+    properties:
+      name:
+        type: string
+      product_id:
+        type: integer
+      quantity:
+        type: integer
+    type: object
+  dto.OrderResponse:
+    properties:
+      id:
+        type: integer
+      items:
+        items:
+          $ref: '#/definitions/dto.OrderItemDetail'
+        type: array
+      status:
+        $ref: '#/definitions/models.StatusOrder'
+      user_id:
+        type: integer
+    type: object
   dto.OrderUpdateRequest:
     properties:
       status:
         $ref: '#/definitions/models.StatusOrder'
     type: object
-  models.Category:
+  dto.ProductRequest:
     properties:
-      id:
+      category_id:
+        type: integer
+      count:
         type: integer
       name:
         type: string
-      products:
-        items:
-          $ref: '#/definitions/models.Product'
-        type: array
     type: object
-  models.Order:
+  dto.ProductResponse:
     properties:
-      id:
-        type: integer
-      products:
-        items:
-          $ref: '#/definitions/models.OrderProduct'
-        type: array
-      status:
-        type: string
-      user:
-        $ref: '#/definitions/models.User'
-      userID:
-        type: integer
-    type: object
-  models.OrderProduct:
-    properties:
-      order:
-        $ref: '#/definitions/models.Order'
-      orderID:
-        type: integer
-      product:
-        $ref: '#/definitions/models.Product'
-      productID:
-        type: integer
-      quantity:
-        type: integer
-    type: object
-  models.Product:
-    properties:
-      category:
-        $ref: '#/definitions/models.Category'
-      categoryID:
+      category_id:
         type: integer
       count:
         type: integer
@@ -71,10 +73,20 @@ definitions:
         type: integer
       name:
         type: string
-      orderProducts:
-        items:
-          $ref: '#/definitions/models.OrderProduct'
-        type: array
+    type: object
+  dto.UserRequest:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.UserResponse:
+    properties:
+      id:
+        type: integer
+      login:
+        type: string
     type: object
   models.StatusOrder:
     enum:
@@ -86,19 +98,6 @@ definitions:
     - StatusNew
     - StatusProcessing
     - StatusCancelled
-  models.User:
-    properties:
-      id:
-        type: integer
-      login:
-        type: string
-      orders:
-        items:
-          $ref: '#/definitions/models.Order'
-        type: array
-      password:
-        type: string
-    type: object
 info:
   contact: {}
 paths:
@@ -112,7 +111,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Category'
+              $ref: '#/definitions/dto.CategoryResponse'
             type: array
         "500":
           description: Ошибка сервера
@@ -131,14 +130,14 @@ paths:
         name: category
         required: true
         schema:
-          $ref: '#/definitions/models.Category'
+          $ref: '#/definitions/dto.CategoryRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Category'
+            $ref: '#/definitions/dto.CategoryResponse'
         "400":
           description: Некорректные данные
           schema:
@@ -189,7 +188,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Category'
+            $ref: '#/definitions/dto.CategoryResponse'
         "400":
           description: Некорректный ID
           schema:
@@ -206,19 +205,24 @@ paths:
       - application/json
       description: Обновляет данные категории по ID
       parameters:
+      - description: ID категории
+        in: path
+        name: id
+        required: true
+        type: integer
       - description: Обновленные данные категории
         in: body
         name: category
         required: true
         schema:
-          $ref: '#/definitions/models.Category'
+          $ref: '#/definitions/dto.CategoryRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Category'
+            $ref: '#/definitions/dto.CategoryResponse'
         "400":
           description: Некорректные данные
           schema:
@@ -248,7 +252,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Order'
+            $ref: '#/definitions/dto.OrderResponse'
         "400":
           description: Некорректный запрос
           schema:
@@ -299,7 +303,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Order'
+            $ref: '#/definitions/dto.OrderResponse'
         "400":
           description: Некорректный ID
           schema:
@@ -321,7 +325,7 @@ paths:
         name: id
         required: true
         type: integer
-      - description: Новый статус
+      - description: Новый статус заказа
         in: body
         name: body
         required: true
@@ -333,7 +337,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Order'
+            $ref: '#/definitions/dto.OrderResponse'
         "400":
           description: Некорректный запрос
           schema:
@@ -385,7 +389,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Product'
+              $ref: '#/definitions/dto.ProductResponse'
             type: array
         "500":
           description: Ошибка сервера
@@ -404,14 +408,14 @@ paths:
         name: product
         required: true
         schema:
-          $ref: '#/definitions/models.Product'
+          $ref: '#/definitions/dto.ProductRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Product'
+            $ref: '#/definitions/dto.ProductResponse'
         "400":
           description: Некорректные данные
           schema:
@@ -462,7 +466,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Product'
+            $ref: '#/definitions/dto.ProductResponse'
         "400":
           description: Некорректный ID
           schema:
@@ -479,19 +483,24 @@ paths:
       - application/json
       description: Обновляет информацию о товаре по ID
       parameters:
+      - description: ID товара
+        in: path
+        name: id
+        required: true
+        type: integer
       - description: Обновленные данные товара
         in: body
         name: product
         required: true
         schema:
-          $ref: '#/definitions/models.Product'
+          $ref: '#/definitions/dto.ProductRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Product'
+            $ref: '#/definitions/dto.ProductResponse'
         "400":
           description: Некорректные данные
           schema:
@@ -513,7 +522,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.User'
+              $ref: '#/definitions/dto.UserResponse'
             type: array
         "500":
           description: Ошибка сервера
@@ -532,14 +541,14 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/models.User'
+          $ref: '#/definitions/dto.UserRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: '#/definitions/dto.UserResponse'
         "400":
           description: Некорректные данные
           schema:
@@ -590,7 +599,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: '#/definitions/dto.UserResponse'
         "400":
           description: Некорректный ID
           schema:
@@ -607,19 +616,24 @@ paths:
       - application/json
       description: Обновляет информацию о пользователе по его ID
       parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
       - description: Обновленные данные пользователя
         in: body
         name: user
         required: true
         schema:
-          $ref: '#/definitions/models.User'
+          $ref: '#/definitions/dto.UserRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: '#/definitions/dto.UserResponse'
         "400":
           description: Некорректные данные
           schema:
@@ -647,7 +661,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Order'
+              $ref: '#/definitions/dto.OrderResponse'
             type: array
         "400":
           description: Некорректный ID

@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	_ "onlineShop/internal/dto"
 	"onlineShop/internal/models"
 	"onlineShop/internal/utils"
 )
@@ -12,16 +13,16 @@ import (
 // @Description  Возвращает список всех категорий товаров
 // @Tags         Categories
 // @Produce      json
-// @Success      200  {array}   models.Category
+// @Success      200  {array}   dto.CategoryResponse
 // @Failure      500  {string}  string "Ошибка сервера"
 // @Router       /api/categories [get]
 func (h *Handler) CategoriesGetHandler(w http.ResponseWriter, r *http.Request) {
-	Categories, err := h.service.Category.GetCategories()
+	categories, err := h.service.Category.GetCategories()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(w).Encode(Categories)
+	json.NewEncoder(w).Encode(categories)
 }
 
 // CategoriesPostHandler godoc
@@ -30,18 +31,18 @@ func (h *Handler) CategoriesGetHandler(w http.ResponseWriter, r *http.Request) {
 // @Tags         Categories
 // @Accept       json
 // @Produce      json
-// @Param        category  body      models.Category  true  "Данные категории"
-// @Success      201       {object}  models.Category
+// @Param        category  body      dto.CategoryRequest  true  "Данные категории"
+// @Success      201       {object}  dto.CategoryResponse
 // @Failure      400       {string}  string "Некорректные данные"
 // @Failure      500       {string}  string "Ошибка сервера"
 // @Router       /api/categories [post]
 func (h *Handler) CategoriesPostHandler(w http.ResponseWriter, r *http.Request) {
-	var Category models.Category
-	if err := json.NewDecoder(r.Body).Decode(&Category); err != nil {
+	var category models.Category
+	if err := json.NewDecoder(r.Body).Decode(&category); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	createdCategory, err := h.service.Category.CreateCategory(&Category)
+	createdCategory, err := h.service.Category.CreateCategory(&category)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -56,7 +57,7 @@ func (h *Handler) CategoriesPostHandler(w http.ResponseWriter, r *http.Request) 
 // @Tags         Categories
 // @Produce      json
 // @Param        id   path      int  true  "ID категории"
-// @Success      200  {object}  models.Category
+// @Success      200  {object}  dto.CategoryResponse
 // @Failure      400  {string}  string "Некорректный ID"
 // @Failure      500  {string}  string "Ошибка сервера"
 // @Router       /api/categories/{id} [get]
@@ -67,12 +68,12 @@ func (h *Handler) CategoryGetHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Category, err := h.service.Category.GetCategory(id)
+	category, err := h.service.Category.GetCategory(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(w).Encode(Category)
+	json.NewEncoder(w).Encode(category)
 }
 
 // CategoryPutHandler godoc
@@ -81,26 +82,27 @@ func (h *Handler) CategoryGetHandler(w http.ResponseWriter, r *http.Request) {
 // @Tags         Categories
 // @Accept       json
 // @Produce      json
-// @Param        category  body      models.Category  true  "Обновленные данные категории"
-// @Success      200       {object}  models.Category
-// @Failure      400       {string}  string "Некорректные данные"
-// @Failure      500       {string}  string "Ошибка сервера"
+// @Param        id         path      int                 true  "ID категории"
+// @Param        category   body      dto.CategoryRequest  true  "Обновленные данные категории"
+// @Success      200        {object}  dto.CategoryResponse
+// @Failure      400        {string}  string "Некорректные данные"
+// @Failure      500        {string}  string "Ошибка сервера"
 // @Router       /api/categories/{id} [put]
 func (h *Handler) CategoryPutHandler(w http.ResponseWriter, r *http.Request) {
-	var Category models.Category
-	if err := json.NewDecoder(r.Body).Decode(&Category); err != nil {
+	var category models.Category
+	if err := json.NewDecoder(r.Body).Decode(&category); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	CategoryUpdated, err := h.service.Category.UpdateCategory(&Category)
+	categoryUpdated, err := h.service.Category.UpdateCategory(&category)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(CategoryUpdated)
+	json.NewEncoder(w).Encode(categoryUpdated)
 }
 
 // CategoryDeleteHandler godoc

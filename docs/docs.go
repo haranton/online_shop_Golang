@@ -31,7 +31,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Category"
+                                "$ref": "#/definitions/dto.CategoryResponse"
                             }
                         }
                     },
@@ -62,7 +62,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Category"
+                            "$ref": "#/definitions/dto.CategoryRequest"
                         }
                     }
                 ],
@@ -70,7 +70,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.Category"
+                            "$ref": "#/definitions/dto.CategoryResponse"
                         }
                     },
                     "400": {
@@ -111,7 +111,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Category"
+                            "$ref": "#/definitions/dto.CategoryResponse"
                         }
                     },
                     "400": {
@@ -142,12 +142,19 @@ const docTemplate = `{
                 "summary": "Обновить категорию",
                 "parameters": [
                     {
+                        "type": "integer",
+                        "description": "ID категории",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Обновленные данные категории",
                         "name": "category",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Category"
+                            "$ref": "#/definitions/dto.CategoryRequest"
                         }
                     }
                 ],
@@ -155,7 +162,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Category"
+                            "$ref": "#/definitions/dto.CategoryResponse"
                         }
                     },
                     "400": {
@@ -237,7 +244,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.Order"
+                            "$ref": "#/definitions/dto.OrderResponse"
                         }
                     },
                     "400": {
@@ -278,7 +285,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Order"
+                            "$ref": "#/definitions/dto.OrderResponse"
                         }
                     },
                     "400": {
@@ -316,7 +323,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Новый статус",
+                        "description": "Новый статус заказа",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -329,7 +336,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Order"
+                            "$ref": "#/definitions/dto.OrderResponse"
                         }
                     },
                     "400": {
@@ -444,7 +451,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Product"
+                                "$ref": "#/definitions/dto.ProductResponse"
                             }
                         }
                     },
@@ -475,7 +482,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Product"
+                            "$ref": "#/definitions/dto.ProductRequest"
                         }
                     }
                 ],
@@ -483,7 +490,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.Product"
+                            "$ref": "#/definitions/dto.ProductResponse"
                         }
                     },
                     "400": {
@@ -524,7 +531,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Product"
+                            "$ref": "#/definitions/dto.ProductResponse"
                         }
                     },
                     "400": {
@@ -555,12 +562,19 @@ const docTemplate = `{
                 "summary": "Обновить товар",
                 "parameters": [
                     {
+                        "type": "integer",
+                        "description": "ID товара",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Обновленные данные товара",
                         "name": "product",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Product"
+                            "$ref": "#/definitions/dto.ProductRequest"
                         }
                     }
                 ],
@@ -568,7 +582,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Product"
+                            "$ref": "#/definitions/dto.ProductResponse"
                         }
                     },
                     "400": {
@@ -638,7 +652,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.User"
+                                "$ref": "#/definitions/dto.UserResponse"
                             }
                         }
                     },
@@ -669,7 +683,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/dto.UserRequest"
                         }
                     }
                 ],
@@ -677,7 +691,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/dto.UserResponse"
                         }
                     },
                     "400": {
@@ -718,7 +732,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/dto.UserResponse"
                         }
                     },
                     "400": {
@@ -749,12 +763,19 @@ const docTemplate = `{
                 "summary": "Обновить данные пользователя",
                 "parameters": [
                     {
+                        "type": "integer",
+                        "description": "ID пользователя",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Обновленные данные пользователя",
                         "name": "user",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/dto.UserRequest"
                         }
                     }
                 ],
@@ -762,7 +783,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/dto.UserResponse"
                         }
                     },
                     "400": {
@@ -841,7 +862,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Order"
+                                "$ref": "#/definitions/dto.OrderResponse"
                             }
                         }
                     },
@@ -862,10 +883,29 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.CategoryRequest": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.CategoryResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.Items": {
             "type": "object",
             "properties": {
-                "productID": {
+                "product_id": {
                     "type": "integer"
                 },
                 "quantity": {
@@ -887,6 +927,40 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.OrderItemDetail": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.OrderResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.OrderItemDetail"
+                    }
+                },
+                "status": {
+                    "$ref": "#/definitions/models.StatusOrder"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.OrderUpdateRequest": {
             "type": "object",
             "properties": {
@@ -895,73 +969,24 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Category": {
+        "dto.ProductRequest": {
             "type": "object",
             "properties": {
-                "id": {
+                "category_id": {
+                    "type": "integer"
+                },
+                "count": {
                     "type": "integer"
                 },
                 "name": {
                     "type": "string"
-                },
-                "products": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Product"
-                    }
                 }
             }
         },
-        "models.Order": {
+        "dto.ProductResponse": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "products": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.OrderProduct"
-                    }
-                },
-                "status": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/models.User"
-                },
-                "userID": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.OrderProduct": {
-            "type": "object",
-            "properties": {
-                "order": {
-                    "$ref": "#/definitions/models.Order"
-                },
-                "orderID": {
-                    "type": "integer"
-                },
-                "product": {
-                    "$ref": "#/definitions/models.Product"
-                },
-                "productID": {
-                    "type": "integer"
-                },
-                "quantity": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.Product": {
-            "type": "object",
-            "properties": {
-                "category": {
-                    "$ref": "#/definitions/models.Category"
-                },
-                "categoryID": {
+                "category_id": {
                     "type": "integer"
                 },
                 "count": {
@@ -972,12 +997,28 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.UserRequest": {
+            "type": "object",
+            "properties": {
+                "login": {
+                    "type": "string"
                 },
-                "orderProducts": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.OrderProduct"
-                    }
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UserResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "login": {
+                    "type": "string"
                 }
             }
         },
@@ -993,26 +1034,6 @@ const docTemplate = `{
                 "StatusProcessing",
                 "StatusCancelled"
             ]
-        },
-        "models.User": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "login": {
-                    "type": "string"
-                },
-                "orders": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Order"
-                    }
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
         }
     }
 }`

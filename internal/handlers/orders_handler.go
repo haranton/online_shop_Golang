@@ -14,25 +14,25 @@ import (
 // @Accept       json
 // @Produce      json
 // @Param        order  body      dto.OrderCreateRequest  true  "Данные для создания заказа"
-// @Success      201    {object}  models.Order
+// @Success      201    {object}  dto.OrderResponse
 // @Failure      400    {string}  string "Некорректный запрос"
 // @Failure      500    {string}  string "Ошибка сервера"
 // @Router       /api/orders [post]
 func (h *Handler) OrdersPostHandler(w http.ResponseWriter, r *http.Request) {
-
 	var order dto.OrderCreateRequest
 	if err := json.NewDecoder(r.Body).Decode(&order); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	createdOrder, err := h.service.Order.CreateOrder(order.UserID, order.Items)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(createdOrder)
-
 }
 
 // OrderGetHandler godoc
@@ -41,25 +41,24 @@ func (h *Handler) OrdersPostHandler(w http.ResponseWriter, r *http.Request) {
 // @Tags         Orders
 // @Produce      json
 // @Param        id   path      int  true  "ID заказа"
-// @Success      200  {object}  models.Order
+// @Success      200  {object}  dto.OrderResponse
 // @Failure      400  {string}  string "Некорректный ID"
 // @Failure      500  {string}  string "Ошибка сервера"
 // @Router       /api/orders/{id} [get]
 func (h *Handler) OrderGetHandler(w http.ResponseWriter, r *http.Request) {
-
 	id, err := utils.GetParamIDFromRequest(r, "id")
-
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	Order, err := h.service.Order.GetOrder(id)
+	order, err := h.service.Order.GetOrder(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(w).Encode(Order)
+
+	json.NewEncoder(w).Encode(order)
 }
 
 // OrderPutHandler godoc
@@ -68,14 +67,13 @@ func (h *Handler) OrderGetHandler(w http.ResponseWriter, r *http.Request) {
 // @Tags         Orders
 // @Accept       json
 // @Produce      json
-// @Param        id    path      int                     true  "ID заказа"
-// @Param        body  body      dto.OrderUpdateRequest   true  "Новый статус"
-// @Success      200   {object}  models.Order
+// @Param        id    path      int                    true  "ID заказа"
+// @Param        body  body      dto.OrderUpdateRequest true  "Новый статус заказа"
+// @Success      200   {object}  dto.OrderResponse
 // @Failure      400   {string}  string "Некорректный запрос"
 // @Failure      500   {string}  string "Ошибка сервера"
 // @Router       /api/orders/{id} [put]
 func (h *Handler) OrderPutHandler(w http.ResponseWriter, r *http.Request) {
-
 	id, err := utils.GetParamIDFromRequest(r, "id")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -93,6 +91,7 @@ func (h *Handler) OrderPutHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	json.NewEncoder(w).Encode(updatedOrder)
 }
 
@@ -106,7 +105,6 @@ func (h *Handler) OrderPutHandler(w http.ResponseWriter, r *http.Request) {
 // @Failure      500  {string}  string "Ошибка сервера"
 // @Router       /api/orders/{id} [delete]
 func (h *Handler) OrderDeleteHandler(w http.ResponseWriter, r *http.Request) {
-
 	id, err := utils.GetParamIDFromRequest(r, "id")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -118,6 +116,7 @@ func (h *Handler) OrderDeleteHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -127,12 +126,11 @@ func (h *Handler) OrderDeleteHandler(w http.ResponseWriter, r *http.Request) {
 // @Tags         Orders
 // @Produce      json
 // @Param        id   path      int  true  "ID пользователя"
-// @Success      200  {array}   models.Order
+// @Success      200  {array}   dto.OrderResponse
 // @Failure      400  {string}  string "Некорректный ID"
 // @Failure      500  {string}  string "Ошибка сервера"
 // @Router       /api/users/{id}/orders [get]
 func (h *Handler) GetOrdersByUserIDHandler(w http.ResponseWriter, r *http.Request) {
-
 	userID, err := utils.GetParamIDFromRequest(r, "id")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -144,6 +142,7 @@ func (h *Handler) GetOrdersByUserIDHandler(w http.ResponseWriter, r *http.Reques
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	json.NewEncoder(w).Encode(orders)
 }
 
@@ -158,7 +157,6 @@ func (h *Handler) GetOrdersByUserIDHandler(w http.ResponseWriter, r *http.Reques
 // @Failure      500        {string}  string "Ошибка сервера"
 // @Router       /api/orders/{orderId}/products/{productId} [delete]
 func (h *Handler) DeleteProductFromOrderHandler(w http.ResponseWriter, r *http.Request) {
-
 	orderID, err := utils.GetParamIDFromRequest(r, "orderId")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -176,5 +174,6 @@ func (h *Handler) DeleteProductFromOrderHandler(w http.ResponseWriter, r *http.R
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	w.WriteHeader(http.StatusNoContent)
 }

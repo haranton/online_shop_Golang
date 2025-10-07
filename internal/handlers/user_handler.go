@@ -12,7 +12,7 @@ import (
 // @Description  Возвращает список всех зарегистрированных пользователей
 // @Tags         Users
 // @Produce      json
-// @Success      200  {array}   models.User
+// @Success      200  {array}   dto.UserResponse
 // @Failure      500  {string}  string "Ошибка сервера"
 // @Router       /api/users [get]
 func (h *Handler) UsersGetHandler(w http.ResponseWriter, r *http.Request) {
@@ -30,15 +30,15 @@ func (h *Handler) UsersGetHandler(w http.ResponseWriter, r *http.Request) {
 // @Tags         Users
 // @Accept       json
 // @Produce      json
-// @Param        user  body      models.User  true  "Данные пользователя"
-// @Success      201   {object}  models.User
+// @Param        user  body      dto.UserRequest  true  "Данные пользователя"
+// @Success      201   {object}  dto.UserResponse
 // @Failure      400   {string}  string "Некорректные данные"
 // @Failure      500   {string}  string "Ошибка сервера"
 // @Router       /api/users [post]
 func (h *Handler) UsersPostHandler(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	createdUser, err := h.service.User.CreateUser(&user)
@@ -56,7 +56,7 @@ func (h *Handler) UsersPostHandler(w http.ResponseWriter, r *http.Request) {
 // @Tags         Users
 // @Produce      json
 // @Param        id   path      int  true  "ID пользователя"
-// @Success      200  {object}  models.User
+// @Success      200  {object}  dto.UserResponse
 // @Failure      400  {string}  string "Некорректный ID"
 // @Failure      500  {string}  string "Ошибка сервера"
 // @Router       /api/users/{id} [get]
@@ -81,15 +81,16 @@ func (h *Handler) UserGetHandler(w http.ResponseWriter, r *http.Request) {
 // @Tags         Users
 // @Accept       json
 // @Produce      json
-// @Param        user  body      models.User  true  "Обновленные данные пользователя"
-// @Success      200   {object}  models.User
+// @Param        id    path      int             true  "ID пользователя"
+// @Param        user  body      dto.UserRequest  true  "Обновленные данные пользователя"
+// @Success      200   {object}  dto.UserResponse
 // @Failure      400   {string}  string "Некорректные данные"
 // @Failure      500   {string}  string "Ошибка сервера"
 // @Router       /api/users/{id} [put]
 func (h *Handler) UserPutHandler(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
