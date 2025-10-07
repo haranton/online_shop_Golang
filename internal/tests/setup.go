@@ -24,6 +24,7 @@ func SetupTestEnv() (*Setup, error) {
 	logger := logger.GetLogger("DEBUG")
 	cfg := config.LoadConfig(logger)
 	cfg.DBName = "db_test"
+	cfg.DBHost = "db"
 
 	db.RunMigrations(cfg, logger)
 
