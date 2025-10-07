@@ -24,7 +24,6 @@ COPY --from=builder /app/main .
 
 # Копируем миграции, SQL и env
 COPY --from=builder /app/internal/db/migrations ./internal/db/migrations
-COPY init.sql ./
 COPY .env ./
 
 # Добавляем временную зону (для логов и т.п.)
