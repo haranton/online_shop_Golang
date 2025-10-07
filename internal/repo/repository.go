@@ -1,15 +1,19 @@
 package repo
 
 import (
+	"log/slog"
+
 	"gorm.io/gorm"
 )
 
 type Repository struct {
-	db *gorm.DB
+	db     *gorm.DB
+	logger *slog.Logger
 }
 
-func NewReposytory(db *gorm.DB) *Repository {
+func NewReposytory(db *gorm.DB, logger *slog.Logger) *Repository {
 	return &Repository{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }

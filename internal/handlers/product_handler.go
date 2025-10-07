@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 	"onlineShop/internal/models"
 	"onlineShop/internal/utils"
@@ -18,6 +19,7 @@ import (
 func (h *Handler) ProductsGetHandler(w http.ResponseWriter, r *http.Request) {
 	products, err := h.service.Product.GetProducts()
 	if err != nil {
+		h.logger.Error("failed to get products", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -38,11 +40,13 @@ func (h *Handler) ProductsGetHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) ProductsPostHandler(w http.ResponseWriter, r *http.Request) {
 	var product models.Product
 	if err := json.NewDecoder(r.Body).Decode(&product); err != nil {
+		h.logger.Error("failed to decode product", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	createdProduct, err := h.service.Product.CreateProduct(&product)
 	if err != nil {
+		h.logger.Error("failed to create product", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -63,12 +67,14 @@ func (h *Handler) ProductsPostHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) ProductGetHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := utils.GetParamIDFromRequest(r, "id")
 	if err != nil {
+		h.logger.Error("failed to get product id from request", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	product, err := h.service.Product.GetProduct(id)
 	if err != nil {
+		h.logger.Error("failed to get product", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -90,12 +96,14 @@ func (h *Handler) ProductGetHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) ProductPutHandler(w http.ResponseWriter, r *http.Request) {
 	var product models.Product
 	if err := json.NewDecoder(r.Body).Decode(&product); err != nil {
+		h.logger.Error("failed to decode product", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	productUpdated, err := h.service.Product.UpdateProduct(&product)
 	if err != nil {
+		h.logger.Error("failed to update product", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -116,12 +124,14 @@ func (h *Handler) ProductPutHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) ProductDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := utils.GetParamIDFromRequest(r, "id")
 	if err != nil {
+		h.logger.Error("failed to get product id from request", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	err = h.service.Product.DeleteProduct(id)
 	if err != nil {
+		h.logger.Error("failed to delete product", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

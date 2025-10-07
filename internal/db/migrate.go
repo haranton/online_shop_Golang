@@ -3,8 +3,9 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"log"
+	"log/slog"
 	"onlineShop/internal/config"
+	"os"
 	"path/filepath"
 	"runtime"
 
@@ -13,21 +14,25 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
-func RunMigrations(cfg *config.Config) {
+func RunMigrations(cfg *config.Config, logger *slog.Logger) {
 	dsn := fmt.Sprintf(
 		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
 		cfg.DBUser, cfg.DBPassword, cfg.DBHost, cfg.DBPort, cfg.DBName,
 	)
 
+	logger.Info("Starting database migrations")
+
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
-		log.Fatal("failed to connect database:", err)
+		logger.Error("failed to open database connection:", slog.String("error", err.Error()))
+		os.Exit(1)
 	}
 	defer db.Close()
 
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	if err != nil {
-		log.Fatal("failed to create migration driver:", err)
+		logger.Error("failed to create migration driver:", slog.String("error", err.Error()))
+		os.Exit(1)
 	}
 
 	_, b, _, _ := runtime.Caller(0)
@@ -38,12 +43,14 @@ func RunMigrations(cfg *config.Config) {
 		"postgres", driver,
 	)
 	if err != nil {
-		log.Fatal("failed to create migrate instance:", err)
+		logger.Error("failed to create migrate instance:", slog.String("error", err.Error()))
+		os.Exit(1)
 	}
 
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-		log.Fatal("failed to run migrations:", err)
+		logger.Error("failed to run migrations:", slog.String("error", err.Error()))
+		os.Exit(1)
 	}
 
-	log.Println("Database migrations ran successfully")
+	logger.Info("Database migrations ran successfully")
 }

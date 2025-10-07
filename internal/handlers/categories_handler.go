@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 	_ "onlineShop/internal/dto"
 	"onlineShop/internal/models"
@@ -19,6 +20,7 @@ import (
 func (h *Handler) CategoriesGetHandler(w http.ResponseWriter, r *http.Request) {
 	categories, err := h.service.Category.GetCategories()
 	if err != nil {
+		h.logger.Error("failed to get categories", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -39,11 +41,13 @@ func (h *Handler) CategoriesGetHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) CategoriesPostHandler(w http.ResponseWriter, r *http.Request) {
 	var category models.Category
 	if err := json.NewDecoder(r.Body).Decode(&category); err != nil {
+		h.logger.Error("failed to decode category", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	createdCategory, err := h.service.Category.CreateCategory(&category)
 	if err != nil {
+		h.logger.Error("failed to create category", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -64,12 +68,14 @@ func (h *Handler) CategoriesPostHandler(w http.ResponseWriter, r *http.Request) 
 func (h *Handler) CategoryGetHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := utils.GetParamIDFromRequest(r, "id")
 	if err != nil {
+		h.logger.Error("failed to get category id from request", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	category, err := h.service.Category.GetCategory(id)
 	if err != nil {
+		h.logger.Error("failed to get category", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -91,12 +97,14 @@ func (h *Handler) CategoryGetHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) CategoryPutHandler(w http.ResponseWriter, r *http.Request) {
 	var category models.Category
 	if err := json.NewDecoder(r.Body).Decode(&category); err != nil {
+		h.logger.Error("failed to decode category", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	categoryUpdated, err := h.service.Category.UpdateCategory(&category)
 	if err != nil {
+		h.logger.Error("failed to update category", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -117,12 +125,14 @@ func (h *Handler) CategoryPutHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) CategoryDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := utils.GetParamIDFromRequest(r, "id")
 	if err != nil {
+		h.logger.Error("failed to get category id from request", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	err = h.service.Category.DeleteCategory(id)
 	if err != nil {
+		h.logger.Error("failed to delete category", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

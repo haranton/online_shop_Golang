@@ -7,6 +7,7 @@ import (
 	"onlineShop/internal/config"
 	"onlineShop/internal/db"
 	"onlineShop/internal/handlers"
+	"onlineShop/internal/logger"
 	"onlineShop/internal/repo"
 	"onlineShop/internal/service"
 
@@ -20,12 +21,13 @@ type Setup struct {
 
 func SetupTestEnv() (*Setup, error) {
 
-	cfg := config.LoadConfig()
+	logger := logger.GetLogger("DEBUG")
+	cfg := config.LoadConfig(logger)
 	cfg.DBName = "db_test"
 
-	db.RunMigrations(cfg)
+	db.RunMigrations(cfg, logger)
 
-	database := db.GetDB(cfg)
+	database := db.GetDB(cfg, logger)
 	if database == nil {
 		return nil, fmt.Errorf("failed to connect to database")
 	}
@@ -47,9 +49,9 @@ func SetupTestEnv() (*Setup, error) {
 		return nil, fmt.Errorf("failed to clear order_products table: %v", err)
 	}
 
-	repository := repo.NewReposytory(database)
+	repository := repo.NewReposytory(database, logger)
 	services := service.NewService(repository)
-	h := handlers.NewHandler(services)
+	h := handlers.NewHandler(services, logger)
 
 	mux := http.NewServeMux()
 	h.RegisterRoutes(mux)

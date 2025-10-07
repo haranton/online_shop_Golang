@@ -1,6 +1,8 @@
 package service
 
-import "onlineShop/internal/repo"
+import (
+	"onlineShop/internal/repo"
+)
 
 // Service — фасад для всех сервисов
 type Service struct {

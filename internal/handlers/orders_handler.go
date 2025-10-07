@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 	"onlineShop/internal/dto"
 	"onlineShop/internal/utils"
@@ -21,6 +22,7 @@ import (
 func (h *Handler) OrdersPostHandler(w http.ResponseWriter, r *http.Request) {
 	var order dto.OrderCreateRequest
 	if err := json.NewDecoder(r.Body).Decode(&order); err != nil {
+		h.logger.Error("failed to decode order", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -48,12 +50,14 @@ func (h *Handler) OrdersPostHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) OrderGetHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := utils.GetParamIDFromRequest(r, "id")
 	if err != nil {
+		h.logger.Error("failed to get order id from request", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	order, err := h.service.Order.GetOrder(id)
 	if err != nil {
+		h.logger.Error("failed to get order", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -76,18 +80,21 @@ func (h *Handler) OrderGetHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) OrderPutHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := utils.GetParamIDFromRequest(r, "id")
 	if err != nil {
+		h.logger.Error("failed to get order id from request", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	var updateReq dto.OrderUpdateRequest
 	if err := json.NewDecoder(r.Body).Decode(&updateReq); err != nil {
+		h.logger.Error("failed to decode order update request", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	updatedOrder, err := h.service.Order.UpdateStatusOrder(id, updateReq.Status)
 	if err != nil {
+		h.logger.Error("failed to update order status", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -107,12 +114,14 @@ func (h *Handler) OrderPutHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) OrderDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := utils.GetParamIDFromRequest(r, "id")
 	if err != nil {
+		h.logger.Error("failed to get order id from request", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	err = h.service.Order.DeleteOrder(id)
 	if err != nil {
+		h.logger.Error("failed to delete order", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -133,12 +142,14 @@ func (h *Handler) OrderDeleteHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetOrdersByUserIDHandler(w http.ResponseWriter, r *http.Request) {
 	userID, err := utils.GetParamIDFromRequest(r, "id")
 	if err != nil {
+		h.logger.Error("failed to get user id from request", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	orders, err := h.service.Order.GetOrdersByUserID(userID)
 	if err != nil {
+		h.logger.Error("failed to get orders by user id", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -159,18 +170,21 @@ func (h *Handler) GetOrdersByUserIDHandler(w http.ResponseWriter, r *http.Reques
 func (h *Handler) DeleteProductFromOrderHandler(w http.ResponseWriter, r *http.Request) {
 	orderID, err := utils.GetParamIDFromRequest(r, "orderId")
 	if err != nil {
+		h.logger.Error("failed to get order id from request", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	productID, err := utils.GetParamIDFromRequest(r, "productId")
 	if err != nil {
+		h.logger.Error("failed to get product id from request", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	err = h.service.Order.DeleteProductFromOrder(orderID, productID)
 	if err != nil {
+		h.logger.Error("failed to delete product from order", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

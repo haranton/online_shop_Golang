@@ -1,7 +1,7 @@
 package config
 
 import (
-	"log"
+	"log/slog"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -14,20 +14,22 @@ type Config struct {
 	DBUser     string
 	DBPassword string
 	DBName     string
+	ENV        string
 }
 
-func LoadConfig() *Config {
-
+// LoadConfig принимает логгер как параметр
+func LoadConfig(logger *slog.Logger) *Config {
 	paths := []string{".env", "../.env"}
 	var err error
 	for _, path := range paths {
 		err = godotenv.Load(path)
 		if err == nil {
+			logger.Debug("Loaded environment file", "path", path)
 			break
 		}
 	}
 	if err != nil {
-		log.Println("Warning: .env file not found, using system environment variables")
+		logger.Warn(".env file not found, using system environment variables")
 	}
 
 	cfg := &Config{
@@ -37,11 +39,17 @@ func LoadConfig() *Config {
 		DBUser:     getEnv("DB_USER", "db"),
 		DBPassword: getEnv("DB_PASSWORD", "db"),
 		DBName:     getEnv("DB_NAME", "db"),
+		ENV:        getEnv("ENV", "DEBUG"),
 	}
 
-	log.Println("Configuration loaded successfully")
-	return cfg
+	logger.Info("Configuration loaded successfully",
+		"app_port", cfg.AppPort,
+		"db_host", cfg.DBHost,
+		"db_name", cfg.DBName,
+		"env", cfg.ENV,
+	)
 
+	return cfg
 }
 
 func getEnv(key, defaultValue string) string {

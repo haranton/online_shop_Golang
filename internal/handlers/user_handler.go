@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 	"onlineShop/internal/models"
 	"onlineShop/internal/utils"
@@ -18,6 +19,7 @@ import (
 func (h *Handler) UsersGetHandler(w http.ResponseWriter, r *http.Request) {
 	users, err := h.service.User.GetUsers()
 	if err != nil {
+		h.logger.Error("failed to get users", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -38,11 +40,13 @@ func (h *Handler) UsersGetHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) UsersPostHandler(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		h.logger.Error("failed to decode user", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	createdUser, err := h.service.User.CreateUser(&user)
 	if err != nil {
+		h.logger.Error("failed to create user", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -63,12 +67,14 @@ func (h *Handler) UsersPostHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) UserGetHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := utils.GetParamIDFromRequest(r, "id")
 	if err != nil {
+		h.logger.Error("failed to get user id from request", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	user, err := h.service.User.GetUser(id)
 	if err != nil {
+		h.logger.Error("failed to get user", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -90,12 +96,14 @@ func (h *Handler) UserGetHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) UserPutHandler(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		h.logger.Error("failed to decode user", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	userUpdated, err := h.service.User.UpdateUser(&user)
 	if err != nil {
+		h.logger.Error("failed to update user", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -116,12 +124,14 @@ func (h *Handler) UserPutHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) UserDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := utils.GetParamIDFromRequest(r, "id")
 	if err != nil {
+		h.logger.Error("failed to get user id from request", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	err = h.service.User.DeleteUser(id)
 	if err != nil {
+		h.logger.Error("failed to delete user", slog.String("error", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
